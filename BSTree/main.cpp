@@ -1,16 +1,30 @@
 #include <iostream>
+#include <fstream>
 #include "BinarySearchTree.h"
 using namespace std;
+
 
 int main()
 {
     BinarySearchTree b, *root = NULL;
-    root = b.Insert(root, "velisarios", 20);
-    b.Insert(root, "dog", 14);
-    b.Insert(root, "table", 45);
-    b.Insert(root, "this", 30);
-    b.Insert(root, "that", 90);
+     ifstream f;
+    string word;
+/*    f.open("words.txt", ios::in);
+    if(f.is_open()){
+      while(f >> word){
+          b.insert(root, word);
+      }
+    }else{
+        cerr << "Coud not open the file" << endl;
+    }*/
 
-    b.Inorder(root);
+    root =b.insert(root, "vel");
+    root =b.insert(root, "vel");
+    
+    root =b.insert(root, "vel");
+    root = b.insert(root, "dfad");
+    b.inorder(root);
+
+
     return 0;
 }
