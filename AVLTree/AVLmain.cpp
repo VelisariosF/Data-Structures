@@ -16,7 +16,7 @@ int main(){
         cerr << "Coud not open the file" << endl;
     }
 
-
+       t.inorder(t.root);
 
     return 0;
 }

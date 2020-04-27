@@ -10,14 +10,15 @@ using namespace std;
 struct avl_node//Δομή κόμβου δέντρου
 {
     string data;//Δεδομένα κόμβου
-    int appearances = 0;
+     int appearances;
     struct avl_node *left;//αριστερό του παιδί
     struct avl_node *right;//δεξιό του παιδί
 };
 class AVLTREE
 {
-    avl_node *root;//Δημιουργία Δέντρου-1ου κόμβου
+   //Δημιουργία Δέντρου-1ου κόμβου
     public:
+          avl_node *root;
         AVLTREE()//αρχικοποίηση δέντρου
         {
             root = NULL;//με κενό
