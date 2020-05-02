@@ -10,13 +10,20 @@ int main(){
     f.open("words.txt", ios::in);
     if(f.is_open()){
       while(f >> word){
+         if(t.insertkey(word)){
+           t.increaseAPPS(word);
+           continue;
+         }
           t.insertion(word);
+          
       }
     }else{
         cerr << "Coud not open the file" << endl;
     }
 
-       t.inorder(t.root);
+       t.inOrder();
+
+    
 
     return 0;
 }

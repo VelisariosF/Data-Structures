@@ -16,9 +16,12 @@ struct avl_node//Δομή κόμβου δέντρου
 };
 class AVLTREE
 {
+
+    avl_node *root;
+  
    //Δημιουργία Δέντρου-1ου κόμβου
     public:
-          avl_node *root;
+          
         AVLTREE()//αρχικοποίηση δέντρου
         {
             root = NULL;//με κενό
@@ -31,7 +34,7 @@ class AVLTREE
         avl_node *lr_rotation(avl_node *);
         avl_node *rl_rotation(avl_node *);
         avl_node* balance(avl_node *);
-        avl_node* insert(avl_node *, string );
+        avl_node* insert(avl_node *, string value );
         void insertion(string itemm){root=insert(root, itemm);}
         avl_node* deletee(avl_node *, string );
         void deleletion(string item){root=deletee(root, item);}
@@ -50,8 +53,14 @@ class AVLTREE
         {
             return get_the_m(root);
         }
-
+        void inOrder(){
+            inorder(root);
+        }
         void inorder(avl_node* root);
+        void increaseAPPS(string key){
+            increaseAps(root, key);
+        }
+        avl_node* increaseAps(avl_node* root, string key);
 };
 
 
@@ -190,15 +199,12 @@ avl_node *AVLTREE::deletee(avl_node *root, string value)
 // Εισαγωγή στοιχείου στο AVL δέντρο
 avl_node *AVLTREE::insert(avl_node *root, string value)//*root ο εκάστοτε κόμβος του δέντρου root- Αρχικά ο 1ος ,value η τιμή
 {
-    if(searchkey(root, value)){
-      root->appearances++;
-      return root;
-    }
+    
     if (root == NULL)//Aν είναι κενός ο κόμβος και δεν έχει τιμή
     {
         root = new avl_node;//Πρόσθεσε νέο κόμβο στο δέντρο
         root->data = value;//Δώστου την τιμή value
-        root->appearances ++;
+        root->appearances++;
         root->left = NULL;//Αρχικοποίησε το αριστερό παιδι με κενό
         root->right = NULL;//Αρχικοποίησε το δεξί παιδί με κενό
         return root;//Επέστρεψε το Δέντρο
@@ -220,8 +226,10 @@ bool AVLTREE::searchkey(avl_node *root,string k)//Αναζήτηση στοιχ�
 {
     if (root!=NULL)
     {
-        if(k==root->data)
+        if(k==root->data){
             return true;
+        }
+           
         else if (k<root->data)
             searchkey(root->left,k);
         else if(k > root->data)
@@ -261,8 +269,26 @@ void AVLTREE:: inorder(avl_node* root){
     {
         return;
     }
-    
+      
     inorder(root->left);
-    cout << "Word:" << this->root->data << " Appearances:" << this -> root->appearances << endl;
+    cout << "Word:" << root->data << " Appearances:" <<  root->appearances << endl;
     inorder(root->right);
+}
+
+avl_node* AVLTREE::increaseAps(avl_node* root, string key){
+    if(!root){
+        return root;
+    }
+    else{
+        if(root->data == key){
+            root->appearances++;
+            return root;
+        }
+        else if(key < root->data){
+            root= root->left;
+            increaseAps(root->left, key);
+        }else if(key > root->data){
+            increaseAps(root->right, key);
+        }
+    }
 }

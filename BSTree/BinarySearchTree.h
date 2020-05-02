@@ -1,208 +1,150 @@
 #include <iostream>
-#include <string>
 using namespace std;
-/* This class implements a Binary Search Tree
-*/
 
-
-class BinarySearchTree
-{
-    //Each node of the tree contains a word and the number of appearances inside the tree
-    string word;//This variable represents the specfic word
-       
-    int appearances;//This represents how many times this word appeared inside the tree
-    BinarySearchTree *left, *right; //Each node of the tree has a left and a right child which is also a 
-                                    //binary tree.
-
+class node{
     public:
-
-     // Default constructor.
-        BinarySearchTree();
-        
-        BinarySearchTree(string aWord);
-   
-    //search function
-       bool search(BinarySearchTree*, string aWord);
-   
-
-    // Insert function.
-        BinarySearchTree* insert(BinarySearchTree*, string aWord);
-        void insertion(string aWord);
-
-    // Delete function
-        BinarySearchTree* deletion(BinarySearchTree*, string aWord);
-    // Inorder traversal.
-        void inorder(BinarySearchTree*);
-    //PreOrder traversal
-        void preOrder(BinarySearchTree*);
-    //PostOrder traversal
-        void postOrder(BinarySearchTree*);
-
-    //This function returns the minimum node inside the binary tree with root equal to the parameter
-        BinarySearchTree* minValueNode(BinarySearchTree *root);
+       node();
+       node(node* l, node* r, string aWord, int aps){
+           left = l;
+           right = r;
+           word = aWord;
+           appearances = aps;
+       }
+       string word;
+       int appearances;
+       node *left;
+       node *right;
 };
 
+class BinarySearchTree{
+    private:
+       node *root;
+       node* insertion(node* root, string aWord);
+       node* deletion(node* root, string aWord);
+       bool exists(node* root, string aWord);
+       node* findMin(node* root);
+       void inorder(node* root);
+   public:
+    BinarySearchTree(){
+        root = NULL;
+    }
+    
+    bool insertion(string aWord);
+    bool deletion(string aWord);
+    bool exists(string word);
+    void inorder();
+};
 
-BinarySearchTree :: BinarySearchTree() {
-    this->word = "";
-    this->appearances = 0;
-    this->left = NULL;
-    this-> right = NULL;
+bool BinarySearchTree:: insertion(string aWord){
+     if(!exists(aWord)){
+         root = insertion(root, aWord);
+         return true;
+     }
+     return false;
 }
 
-// Parameterized Constructor definition.
-BinarySearchTree:: BinarySearchTree(string aWord){
-      this -> word = aWord;
-      this -> appearances++;
-      this -> left = NULL;
-      this -> right = NULL;
+node* BinarySearchTree::insertion(node* root, string aWord){
+    
+    if(!root){
+        root = new node(NULL, NULL, aWord, 1);
+        return root;
+    }else{
+
+        if(aWord < root->word){
+            root->left = insertion(root->left, aWord);
+        }else{
+            root->right = insertion(root->right, aWord);
+        }
+    }
+
+    return root;
 }
 
-bool BinarySearchTree:: search(BinarySearchTree* root, string aWord){
-   while(root){
-       if(aWord > root -> word){
-           root = root -> right;
-       }else if(aWord < root -> word){
-           root = root -> left;
-       }
-       else
-       {
-           return true;
-       }
-       
-   }
+bool BinarySearchTree::deletion(string aWord){
+    if(exists(aWord)){
+        root = deletion(root, aWord);
+        return true;
+    }
     return false;
 }
 
-void BinarySearchTree:: insertion(string aWord){
-     
-     this->insert(this, aWord);
-     
 
-}
+node* BinarySearchTree::deletion(node* root, string aWord){
+    if(!root){
+        return NULL;
+    }else{
+        if(aWord < root->word){
+            root->left = deletion(root->left, aWord);
+        }else if(aWord > root->word){
+            root->right = deletion(root->right, aWord);
+        }else{
 
-// Insert function definition.
-BinarySearchTree* BinarySearchTree:: insert(BinarySearchTree *root, string aWord)
-{
-     
+           if(root->left == NULL && root->right != NULL){
+                 node* temp = root->right;
+                  root = temp;
+                   delete temp;
+           }else if(root->right == NULL && root->left != NULL){
+                 node* temp = root->left;
+                 root = temp;
+                 delete temp;
+           }else{
+                 node* temp = findMin(root->right);
+                 
+                 root->word = temp->word;
+                 root->appearances = temp->appearances;
+                 root->right = deletion(root->right, temp->word);
+           }
+           
 
-    if(root == NULL)
-    {
-         root = new BinarySearchTree(aWord);
-         
-         return root;
-        // Insert the first node, if root is NULL.
-        
-    }
-
-    // Insert word.
-    if(aWord.compare(root->word) > 0)
-    {
-        // Insert right node word, if the 'value'
-        // to be inserted is greater than 'root' node word.
-
-        // Process right nodes.
-        root->right = insert(root->right, aWord);
-    }
-    else if(aWord.compare(root->word) < 0)
-    {
-        // Insert left node word, if the 'value'
-        // to be inserted is greater than 'root' node word.
-
-        // Process left nodes.
-        root->left = insert(root->left, aWord);
-    }else if(aWord.compare(root->word) == 0){
-        root->appearances++;
-    }
-
-    // Return 'root' node, after insertion.
-    return root;
-}
-
-// Delete function
-BinarySearchTree* BinarySearchTree:: deletion(BinarySearchTree* root, string aWord){
-   
-    
-     if(root == NULL) 
-     {
-         return root;
-     }
-     else if(aWord < root -> word){
-         root->left = deletion(root->left, aWord);
-
-     }else if(aWord > root -> word){
-         root->right = deletion(root->right, aWord);
-
-     }else{
-        
-          if(root->left != NULL && root->right == NULL){
-              BinarySearchTree *temp = root->left;
-              delete root;
-              return temp;
-          }else if(root->left == NULL && root->right != NULL){
-              BinarySearchTree *temp = root->right;
-              delete root;
-              return temp;
-          }else{
-              BinarySearchTree *temp = minValueNode(root->right), *t = minValueNode(root->right);
-              root->word = temp->word;
-              root->appearances = temp->appearances;
-              root->right = deletion(root-> right, temp->word);
-          }
-
-     }
-
-     return root;
-    
-   
-    
-
-}
-
-BinarySearchTree* BinarySearchTree::minValueNode(BinarySearchTree *root)
-{
-    while (root->left != NULL)
-    {
-         root = root->left;
+        }
     }
     return root;
 }
-// Inorder traversal function.
-// This gives word in sorted order.
-void BinarySearchTree:: inorder(BinarySearchTree *root)
-{
-    if(!root)
-    {
-        return;
+
+node* BinarySearchTree::findMin(node* root){
+    node* current = root;
+    while(current->left){
+        current = current->left;
     }
-    
-    inorder(root->left);
-    cout << "Word:" << root->word << " Appearances:" << root -> appearances << endl;
-    inorder(root->right);
+
+    return current;
 }
 
-void BinarySearchTree:: preOrder(BinarySearchTree *root)
-{
-    if(!root)
-    {
-        return;
-    }
-    cout << "Word:" << root->word << " Appearances:" << root -> appearances << endl;
-    inorder(root->left);
-    inorder(root->right);
+
+bool BinarySearchTree:: exists(string aWord){
+     return exists(root, aWord);
 }
 
-void BinarySearchTree:: postOrder(BinarySearchTree *root)
-{
-    if(!root)
-    {
-        return;
-    }
-   
-    inorder(root->left);
-    inorder(root->right);
-     cout << "Word:" << root->word << " Appearances:" << root -> appearances << endl;
+bool BinarySearchTree:: exists(node* root, string aWord){
+    if(!root){
+        return false;
+    }else{
+        if(root->word == aWord){
+          root->appearances++;
+          return true;
+        }else if(aWord < root->word){
+            return exists(root->left, aWord);
+        }else if(aWord > root->word){
+            return exists(root->right, aWord);
+        }
+    }   
 }
 
 
 
+
+
+
+void BinarySearchTree::inorder(){
+    inorder(root);
+}
+
+void BinarySearchTree::inorder(node* root){
+    if(!root){
+        return;
+    }else{
+        inorder(root->left);
+        cout << root->word << ": " << root->appearances << endl;
+        inorder(root->right);
+    }
+}
