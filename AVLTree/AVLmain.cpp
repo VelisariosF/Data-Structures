@@ -10,11 +10,8 @@ int main(){
     f.open("words.txt", ios::in);
     if(f.is_open()){
       while(f >> word){
-         if(t.insertkey(word)){
-           t.increaseAPPS(word);
-           continue;
-         }
-          t.insertion(word);
+         t.insertion(word);
+       
           
       }
     }else{
@@ -22,7 +19,9 @@ int main(){
     }
 
        t.inOrder();
-
+      t.deleletion("by");
+      cout << "after deletion" << endl;
+      t.inOrder();
     
 
     return 0;

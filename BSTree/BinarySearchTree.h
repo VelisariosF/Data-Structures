@@ -21,9 +21,11 @@ class BinarySearchTree{
        node *root;
        node* insertion(node* root, string aWord);
        node* deletion(node* root, string aWord);
-       bool exists(node* root, string aWord);
+       bool search(node* root, string aWord);
        node* findMin(node* root);
-       void inorder(node* root);
+       void inOrder(node* root);
+       void preOrder(node* root);
+       void postOrder(node* root);
    public:
     BinarySearchTree(){
         root = NULL;
@@ -31,29 +33,36 @@ class BinarySearchTree{
     
     bool insertion(string aWord);
     bool deletion(string aWord);
-    bool exists(string word);
-    void inorder();
+    bool search(string word);
+    void inOrder();
+    void preOrder();
+    void postOrder();
 };
 
 bool BinarySearchTree:: insertion(string aWord){
-     if(!exists(aWord)){
+     
          root = insertion(root, aWord);
-         return true;
-     }
-     return false;
+    
+     return true;
 }
 
 node* BinarySearchTree::insertion(node* root, string aWord){
     
     if(!root){
+        
         root = new node(NULL, NULL, aWord, 1);
         return root;
     }else{
 
-        if(aWord < root->word){
+        if(aWord.compare(root->word) < 0){
+            
             root->left = insertion(root->left, aWord);
-        }else{
+        }else if(aWord.compare(root ->word) > 0) {
+            
             root->right = insertion(root->right, aWord);
+        }else{
+            
+            root->appearances++;
         }
     }
 
@@ -61,7 +70,7 @@ node* BinarySearchTree::insertion(node* root, string aWord){
 }
 
 bool BinarySearchTree::deletion(string aWord){
-    if(exists(aWord)){
+    if(search(aWord)){
         root = deletion(root, aWord);
         return true;
     }
@@ -70,36 +79,67 @@ bool BinarySearchTree::deletion(string aWord){
 
 
 node* BinarySearchTree::deletion(node* root, string aWord){
+    
     if(!root){
         return NULL;
     }else{
-        if(aWord < root->word){
-            root->left = deletion(root->left, aWord);
-        }else if(aWord > root->word){
-            root->right = deletion(root->right, aWord);
-        }else{
+          node *p = root, *pp = 0;
+              
+          while(p && p->word.compare(aWord) != 0){
+              pp = p;
+              if(aWord.compare(p->word) < 0){
+                  p = p->left;
+              }else if(aWord.compare(p->word) > 0){
+                  p = p->right;
+              }else{
+                  cout << "element does not exist" << endl;
+              }
+          }
 
-           if(root->left == NULL && root->right != NULL){
-                 node* temp = root->right;
-                  root = temp;
-                   delete temp;
-           }else if(root->right == NULL && root->left != NULL){
-                 node* temp = root->left;
-                 root = temp;
-                 delete temp;
-           }else{
-                 node* temp = findMin(root->right);
-                 
-                 root->word = temp->word;
-                 root->appearances = temp->appearances;
-                 root->right = deletion(root->right, temp->word);
-           }
-           
+          if(p->left && p->right){
+              node *s = p->right, 
+                    *ps = p;
+
+              while(s->left){
+                  ps = s;
+                  s = s->left;
+              } 
+              p->word = s->word;
+              p->appearances = s->appearances;
+              p = s;
+              pp = ps;     
+               
+          }
+          node* c;
+          if(p->left) 
+              c = p->left;
+          else
+          {
+              c = p->right;
+          }
+
+          if(p == root)
+             root = c;
+          else
+          {
+              if(p == pp->left)
+                  pp->left = c;
+              else
+              {
+                  pp->right = c;
+              }
+              
+          }
+          delete p;
+          cout<< "deleted" << endl;
+          return root;
+          
+
 
         }
     }
-    return root;
-}
+
+
 
 node* BinarySearchTree::findMin(node* root){
     node* current = root;
@@ -111,21 +151,20 @@ node* BinarySearchTree::findMin(node* root){
 }
 
 
-bool BinarySearchTree:: exists(string aWord){
-     return exists(root, aWord);
+bool BinarySearchTree:: search(string aWord){
+     return search(root, aWord);
 }
 
-bool BinarySearchTree:: exists(node* root, string aWord){
+bool BinarySearchTree:: search(node* root, string aWord){
     if(!root){
         return false;
     }else{
         if(root->word == aWord){
-          root->appearances++;
           return true;
-        }else if(aWord < root->word){
-            return exists(root->left, aWord);
-        }else if(aWord > root->word){
-            return exists(root->right, aWord);
+        }else if(aWord.compare(root->word) < 0){
+            return search(root->left, aWord);
+        }else if(aWord.compare(root->word) > 0){
+            return search(root->right, aWord);
         }
     }   
 }
@@ -135,16 +174,44 @@ bool BinarySearchTree:: exists(node* root, string aWord){
 
 
 
-void BinarySearchTree::inorder(){
-    inorder(root);
+void BinarySearchTree::inOrder(){
+    inOrder(root);
 }
 
-void BinarySearchTree::inorder(node* root){
+void BinarySearchTree::inOrder(node* root){
     if(!root){
         return;
     }else{
-        inorder(root->left);
+        inOrder(root->left);
         cout << root->word << ": " << root->appearances << endl;
-        inorder(root->right);
+        inOrder(root->right);
+    }
+}
+
+void BinarySearchTree::preOrder(){
+    preOrder(root);
+}
+
+void BinarySearchTree::preOrder(node* root){
+    if(!root){
+        return;
+    }else{
+        cout << root->word << ": " << root->appearances << endl;
+        inOrder(root->left);
+        inOrder(root->right);
+    }
+}
+
+void BinarySearchTree::postOrder(){
+    postOrder(root);
+}
+
+void BinarySearchTree::postOrder(node* root){
+    if(!root){
+        return;
+    }else{
+        inOrder(root->left);
+        inOrder(root->right);
+         cout << root->word << ": " << root->appearances << endl;
     }
 }

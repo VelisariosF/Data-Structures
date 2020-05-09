@@ -26,6 +26,8 @@ class AVLTREE
         {
             root = NULL;//με κενό
         }
+
+        
         int height(avl_node *);
         int diff(avl_node *);
         avl_node *minValueNode(avl_node *);
@@ -36,7 +38,7 @@ class AVLTREE
         avl_node* balance(avl_node *);
         avl_node* insert(avl_node *, string value );
         void insertion(string itemm){root=insert(root, itemm);}
-        avl_node* deletee(avl_node *, string );
+        avl_node* deletee(avl_node *, string value);
         void deleletion(string item){root=deletee(root, item);}
         bool searchkey(avl_node *,string k);
         bool insertkey(string ke)//Αναζήτηση στοιχείου στο δέντρο
@@ -176,7 +178,7 @@ avl_node *AVLTREE::deletee(avl_node *root, string value)
                if(temp==NULL)
                 {
                     temp=root;
-                    root=NULL;
+                    delete root;
                 }
                 else
                     *root= *temp;
@@ -204,7 +206,7 @@ avl_node *AVLTREE::insert(avl_node *root, string value)//*root ο εκάστοτ
     {
         root = new avl_node;//Πρόσθεσε νέο κόμβο στο δέντρο
         root->data = value;//Δώστου την τιμή value
-        root->appearances++;
+        root->appearances = 1;
         root->left = NULL;//Αρχικοποίησε το αριστερό παιδι με κενό
         root->right = NULL;//Αρχικοποίησε το δεξί παιδί με κενό
         return root;//Επέστρεψε το Δέντρο
@@ -214,10 +216,12 @@ avl_node *AVLTREE::insert(avl_node *root, string value)//*root ο εκάστοτ
         root->left = insert(root->left, value);//Κάλεσε ξάνα αναδρομικά την συνάρτηση insert αριστερότερα
         root = balance (root);//Εξισορρόπησε το δέντρο
     }
-    else if (value >= root->data)//Αλλιώς αν η τιμή value είναι μεγαλύτερη ή ίση απο την τιμή του εκάστοτε κόμβου
+    else if (value > root->data)//Αλλιώς αν η τιμή value είναι μεγαλύτερη ή ίση απο την τιμή του εκάστοτε κόμβου
     {
         root->right = insert(root->right, value);//Κάλεσε ξάνα αναδρομικά την συνάρτηση insert δεξιότερα
         root = balance (root);//Εξισορρόπησε το δέντρο
+    }else{
+        root->appearances++;
     }
     return root;//Επέστρεψε το δέντρο-Τερμάτισε την Αναδρομική Συνάρτηση
 }
@@ -275,20 +279,4 @@ void AVLTREE:: inorder(avl_node* root){
     inorder(root->right);
 }
 
-avl_node* AVLTREE::increaseAps(avl_node* root, string key){
-    if(!root){
-        return root;
-    }
-    else{
-        if(root->data == key){
-            root->appearances++;
-            return root;
-        }
-        else if(key < root->data){
-            root= root->left;
-            increaseAps(root->left, key);
-        }else if(key > root->data){
-            increaseAps(root->right, key);
-        }
-    }
-}
+
