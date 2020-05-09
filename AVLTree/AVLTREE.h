@@ -1,282 +1,300 @@
-#include <cstddef>
-#include <string>
-#include<cstdio>
-#include<sstream>
+#include <iostream>
+
 using namespace std;
-//#include<algorithm>
-#define pow2(n) (1 << (n))
-//#if !defined(nullptr)
-#define nullptr NULL
-struct avl_node//Δομή κόμβου δέντρου
-{
-    string data;//Δεδομένα κόμβου
-     int appearances;
-    struct avl_node *left;//αριστερό του παιδί
-    struct avl_node *right;//δεξιό του παιδί
-};
-class AVLTREE
-{
 
-    avl_node *root;
-  
-   //Δημιουργία Δέντρου-1ου κόμβου
+
+class node{
     public:
-          
-        AVLTREE()//αρχικοποίηση δέντρου
-        {
-            root = NULL;//με κενό
-        }
+       node();
+       node(node* l, node* r, string aWord, int aps, int h, int bf){
+           left = l;
+           right = r;
+           word = aWord;
+           appearances = aps;
+           height = h;
+           balanceFactor = bf;
+       }
+       string word;
+       int appearances;
+       int height;
+       int balanceFactor;
+       node *left;
+       node *right;
+};
 
-        
-        int height(avl_node *);
-        int diff(avl_node *);
-        avl_node *minValueNode(avl_node *);
-        avl_node *rr_rotation(avl_node *);
-        avl_node *ll_rotation(avl_node *);
-        avl_node *lr_rotation(avl_node *);
-        avl_node *rl_rotation(avl_node *);
-        avl_node* balance(avl_node *);
-        avl_node* insert(avl_node *, string value );
-        void insertion(string itemm){root=insert(root, itemm);}
-        avl_node* deletee(avl_node *, string value);
-        void deleletion(string item){root=deletee(root, item);}
-        bool searchkey(avl_node *,string k);
-        bool insertkey(string ke)//Αναζήτηση στοιχείου στο δέντρο
-        {
-            return searchkey(root,ke);
-        }
-        int sizeoftree(avl_node *);
-        int get_the_size()
-        {
-            return sizeoftree(root);
-        }
-        string get_the_m(avl_node *);
-        string get_the_min()
-        {
-            return get_the_m(root);
-        }
-        void inOrder(){
-            inorder(root);
-        }
-        void inorder(avl_node* root);
-        void increaseAPPS(string key){
-            increaseAps(root, key);
-        }
-        avl_node* increaseAps(avl_node* root, string key);
+class AvlTree{
+     private:
+       node *root;
+       node* insertion(node* root, string aWord);
+       node* deletion(node* root, string aWord);
+       bool search(node* root, string aWord);
+       int getHeight(node* root);
+       int getBfactor(node* root);
+       node* rightRotation(node* root);
+       node* leftRotation(node* root);
+       node* leftLeftCase(node* root);
+       node* rightRightCase(node* root);
+       node* leftRightCase(node* root);
+       node* rightLeftCase(node* root);
+       node* getBalanced(node* root);
+       void  updateNode(node* root);
+       node* findMin(node* root);
+       void inOrder(node* root);
+       void preOrder(node* root);
+       void postOrder(node* root);
+    public:
+      AvlTree(){
+        root = NULL;
+      }
+    
+      bool insertion(string aWord);
+      bool deletion(string aWord);
+      bool search(string word);
+      void inOrder();
+      void preOrder();
+      void postOrder();
 };
 
 
-
-//Συνάρτηση Εύρεσης Mεγαλύτερου ύψους AVL Δέντρου
-int AVLTREE::height(avl_node *temp)//temp ο εκάστοτε κόμβος
-{
-    int h = 0;//Αρχικοποιεί το ύψος ίσο με το 0
-    if (temp != NULL)//τερματίζει την αναδρομική διαδικασία αν ο κόμβος δεν δείχνει ουτε αριστερά ούτε δεξιά άρα είναι null
-    {
-        int l_height = height (temp->left);//Θέτει το αριστερό ύψος καλώντας αναδρομικά τη συνάρτηση αριστερότερα
-        int r_height = height (temp->right);//θέτει το δεξί ύψος καλώντας αναδρομικά τη συνάρτηση δεξιότερα
-        int max_height = std::max (l_height, r_height);//Βρίσκει το μεγαλύτερο απ τα δύο ύψη, Αριστερό ή Δεξί
-        h = max_height + 1;//θέτει ως ύψος το μεγαλύτερο + 1
-    }
-    return h;//επιστρέφει το μεγαλύτερο φύλο σε ύψος
-}
-//Συνάρτηση Διαφοράς Ύψους
-int AVLTREE::diff(avl_node *temp)//temp ο εκάστοτε κόμβος
-{
-    int l_height = height (temp->left);//Θέτει το αριστερό ύψος καλώντας την αναδρομική συνάρτηση height
-    int r_height = height (temp->right);//θέτει το δεξί ύψος καλώντας την αναδρομική συνάρτηση height
-    int b_factor= l_height - r_height;//Θέτει ως συντελεστή εξισορρόπησησς την διαφορά αριστερού με δεξιού μεγαλύτερου φύλου
-    return b_factor;//τον επιστρέφει
-}
-
-// Δεξιά Περιστροφή
-avl_node *AVLTREE::rr_rotation(avl_node *parent)//*parent ο κόμβος που δεχόμαστε
-{
-    avl_node *temp;//temp ο εκάστοτε κόμβος-Αρχικά ο 1ος και μεγαλύτερος
-    temp = parent->right;//Θέσε στον 1ο κόμβο την τιμή του δεξιού παιδιού του πατέρα κόμβου
-    parent->right = temp->left;//θέσε στο δεξί παιδί του πατέρα την τιμή του αριστερού παιδιού του temp
-    temp->left = parent;//Θέσε στην τιμή του αριστερού παιδιού του temp την τιμή του πατέρα κόμβου
-    return temp;//Επέστρεψε το δέντρο temp
-}
-
-// Αριστερή Περιστροφή
-
-avl_node *AVLTREE::ll_rotation(avl_node *parent)//Δέχεται τον πατέρα κόμβο
-{
-    avl_node *temp;//temp ο εκάστοτε κόμβος-Αρχικά ο 1ος και μεγαλύτερος
-    temp = parent->left;//Θέσε στον 1ο κόμβο την τιμή του αριστερού παιδιού του πατέρα κόμβου
-    parent->left = temp->right;//θέσε στο αριστερό παιδί του πατέρα την τιμή του δεξιού παιδιού του temp
-    temp->right = parent;//Θέσε στην τιμή του δεξιού παιδιού του temp την τιμή του πατέρα κόμβου
-    return temp;//Επέστρεψε το δέντρο temp
-}
-
-
-// Αριστερή-Δεξιά Περιστροφή
-
-avl_node *AVLTREE::lr_rotation(avl_node *parent)
-{
-    avl_node *temp;
-    temp = parent->left;
-    parent->left = rr_rotation (temp);
-    return ll_rotation (parent);
-}
-
-
-// Δεξιά-Αριστερή Περιστροφή
-avl_node *AVLTREE::rl_rotation(avl_node *parent)
-{
-    avl_node *temp;
-    temp = parent->right;
-    parent->right = ll_rotation (temp);
-    return rr_rotation (parent);
-}
-
-
-// Εξισορρόπιση AVL Δέντρου
-
-avl_node *AVLTREE::balance(avl_node *temp)//*temp ο εκάστοτε κόμβος-temp το δέντρο
-{
-    int bal_factor = diff (temp);//καλεί τη συνάρτηση διαφοράς ύψους
-    if (bal_factor > 1)//Αν η διαφορά ύψους είναι μεγαλύτερη από 1 υπάρχει πρόβλημα- προεξέχει απ την αριστερή πλευρά
-    {
-        if (diff (temp->left) > 0)//Αν η διαφορά ύψους στο αριστερά υποδέντρο είναι μεγαλύτερη του 0
-            temp = ll_rotation (temp);//Προεξέχει από αριστερά άρα κάνε αριστερή αριστερή περιστροφή
-        else//αλλιώς
-            temp = lr_rotation (temp);//Προεξέχει από δεξιά ή μπορεί και όχι άρα κάνε αριστερή δεξιά περιστροφή
-    }
-    else if (bal_factor < -1)//Αλλιώς αν η διαφορά ύψους είναι μικρότερη από -1 υπάρχει πρόβλημα- προεξέχει απ την δεξιά πλευρά
-    {
-        if (diff (temp->right) > 0)//Αν η διαφορά ύψους στο δεξί υποδέντρο είναι μεγαλύτερη του 0
-            temp = rl_rotation (temp);//Προεξέχει το αριστερό κλαδί άρα κάνε δεξια αριστερή περιστροφή
-        else//αλλιώς
-            temp = rr_rotation (temp);//Προεξέχει το αριστερό κλαδί ή μπορεί και όχι αρα κάνε δεξιά δεξιά περιστροφή
-    }
-    return temp;//Επέστρεψε το δέντρο
-}
-// Διαγραφή στοιχείου στο AVL δέντρο
-avl_node *AVLTREE::deletee(avl_node *root, string value)
-{
-    if (root == NULL)
-    {
-        return root;
-    }
-    if (value < root->data)//Αλλιώς αν η τιμή value είναι μικρότερη από την τιμή του εκάστοτε κόμβου
-    {
-        root->left = deletee(root->left, value);//Κάλεσε ξάνα αναδρομικά την συνάρτηση deletee αριστερότερα
-        root = balance (root);//Εξισορρόπησε το δέντρο
-    }
-    else if (value > root->data)//Αλλιώς αν η τιμή value είναι μεγαλύτερη ή ίση απο την τιμή του εκάστοτε κόμβου
-    {
-        root->right = deletee(root->right, value);//Κάλεσε ξάνα αναδρομικά την συνάρτηση deletee δεξιότερα
-        root = balance (root);//Εξισορρόπησε το δέντρο
-    }
-    else         // node with only one child or no child
-    {
-        if ((root->left == NULL) || (root->right == NULL))
-           {
-               avl_node *temp= root->left?root->left:root->right;
-               if(temp==NULL)
-                {
-                    temp=root;
-                    delete root;
-                }
-                else
-                    *root= *temp;
-                delete temp;
-           }
-        else
-        {
-            // node with two children: Get the inorder
-            // successor (smallest in the right subtree)
-            avl_node *temp = minValueNode(root->right);
-            // Copy the inorder successor's
-            // data to this node
-            root->data = temp->data;
-            // Delete the inorder successor
-            root->right = deletee(root->right,  temp->data);
-        }
-    }
-    return root;
-}
-// Εισαγωγή στοιχείου στο AVL δέντρο
-avl_node *AVLTREE::insert(avl_node *root, string value)//*root ο εκάστοτε κόμβος του δέντρου root- Αρχικά ο 1ος ,value η τιμή
-{
-    
-    if (root == NULL)//Aν είναι κενός ο κόμβος και δεν έχει τιμή
-    {
-        root = new avl_node;//Πρόσθεσε νέο κόμβο στο δέντρο
-        root->data = value;//Δώστου την τιμή value
-        root->appearances = 1;
-        root->left = NULL;//Αρχικοποίησε το αριστερό παιδι με κενό
-        root->right = NULL;//Αρχικοποίησε το δεξί παιδί με κενό
-        return root;//Επέστρεψε το Δέντρο
-    }
-    else if (value < root->data)//Αλλιώς αν η τιμή value είναι μικρότερη από την τιμή του εκάστοτε κόμβου
-    {
-        root->left = insert(root->left, value);//Κάλεσε ξάνα αναδρομικά την συνάρτηση insert αριστερότερα
-        root = balance (root);//Εξισορρόπησε το δέντρο
-    }
-    else if (value > root->data)//Αλλιώς αν η τιμή value είναι μεγαλύτερη ή ίση απο την τιμή του εκάστοτε κόμβου
-    {
-        root->right = insert(root->right, value);//Κάλεσε ξάνα αναδρομικά την συνάρτηση insert δεξιότερα
-        root = balance (root);//Εξισορρόπησε το δέντρο
-    }else{
-        root->appearances++;
-    }
-    return root;//Επέστρεψε το δέντρο-Τερμάτισε την Αναδρομική Συνάρτηση
-}
-
-bool AVLTREE::searchkey(avl_node *root,string k)//Αναζήτηση στοιχείου στο δέντρο
-{
-    if (root!=NULL)
-    {
-        if(k==root->data){
-            return true;
-        }
-           
-        else if (k<root->data)
-            searchkey(root->left,k);
-        else if(k > root->data)
-            searchkey(root->right,k);
-    }
-    else
-        return false;
-}
-int AVLTREE::sizeoftree(avl_node *tree) //επιστροφή μεγέθους δέντρου
-{
-    if(tree!=NULL)
-    {
-        return 1+sizeoftree(tree->left)+sizeoftree(tree->right);
-    }
-    else
-        return 0;
-}
-avl_node *AVLTREE::minValueNode(avl_node *root)
-{
-    while (root->left != NULL)
-    {
-         root = root->left;
-    }
-    return root;
-}
-string AVLTREE::get_the_m(avl_node *root)//επιστροφή μικρότερης τιμής δέντρου
-{
-    while(root->left !=NULL)
-    {
-        root=root->left;
-    }
-    return root->data;
-}
-
-void AVLTREE:: inorder(avl_node* root){
+int AvlTree:: getHeight(node* root){
     if(!root)
-    {
-        return;
-    }
-      
-    inorder(root->left);
-    cout << "Word:" << root->data << " Appearances:" <<  root->appearances << endl;
-    inorder(root->right);
+      return 0;
+    return root->height;
 }
+
+int AvlTree:: getBfactor(node* root){
+    return root->balanceFactor;
+}
+
+node* AvlTree:: rightRotation(node* root){
+    node* temp = root->left;
+    root->left = temp->right;
+    temp->right = root;
+    updateNode(root);
+    updateNode(temp);
+    return temp;
+}
+
+node* AvlTree:: leftRotation(node* root){
+    node* temp = root->right;
+    root->right = temp->left;
+    temp->left = root;
+    updateNode(root);
+    updateNode(temp);
+    return temp;
+}
+
+node* AvlTree:: leftLeftCase(node* root){
+    return rightRotation(root);
+}
+
+node* AvlTree:: rightRightCase(node* root){
+     return leftRotation(root);
+}
+
+node* AvlTree:: leftRightCase(node* root){
+    root->left = leftRotation(root->left);
+    return leftLeftCase(root);
+}
+
+node* AvlTree:: rightLeftCase(node* root){
+    root->right = rightRotation(root->right);
+    return rightRightCase(root);
+}
+
+node* AvlTree:: getBalanced(node* root){
+    if(getBfactor(root) == 2){
+            if(getBfactor(root->right) >= 0)
+            {
+                   return rightRightCase(root);
+            }
+            else
+            {
+                return rightLeftCase(root);
+            }
+
+        }
+
+        if(getBfactor(root) == -2)
+        {
+            if(getBfactor(root->left) >= 0)
+            {
+                return leftRightCase(root);
+            }
+            else
+            {
+                return leftLeftCase(root);
+            }
+        }
+    return root;
+         
+}
+
+void AvlTree:: updateNode(node* root){
+    int leftChildHeight = -1, rightChildHeight = -1;
+    if(root->left != NULL){
+        leftChildHeight = getHeight(root->left);
+    }
+
+    if(root->right != NULL){
+        rightChildHeight = getHeight(root->right);
+    }
+    
+    root->height = max(leftChildHeight, rightChildHeight);
+    root->balanceFactor = rightChildHeight - leftChildHeight;
+}
+
+bool AvlTree:: search(string aWord){
+    return search(root, aWord);
+}
+
+bool AvlTree:: search(node* root, string aWord){
+    if(!root){
+        return false;
+    }else{
+        if(root->word == aWord){
+          return true;
+        }else if(aWord.compare(root->word) < 0){
+            return search(root->left, aWord);
+        }else if(aWord.compare(root->word) > 0){
+            return search(root->right, aWord);
+        }
+    }   
+}
+
+bool AvlTree:: insertion(string aWord){
+     
+         root = insertion(root, aWord);
+    
+     return true;
+}
+
+node* AvlTree::insertion(node* root, string aWord){
+    
+    if(!root){
+        
+        root = new node(NULL, NULL, aWord, 1, 0, 0);
+        return root;
+    }else{
+
+        if(aWord.compare(root->word) < 0){
+            root->left = insertion(root->left, aWord);
+           
+        }else if(aWord.compare(root ->word) > 0) {
+            root->right = insertion(root->right, aWord);
+            
+        }else{
+            root->appearances++;
+        }
+    }
+    
+    updateNode(root);
+    return getBalanced(root);
+}
+
+
+bool AvlTree::deletion(string aWord){
+    if(search(aWord)){
+        root = deletion(root, aWord);
+        return true;
+    }
+    return false;
+}
+
+
+node* AvlTree::deletion(node* root, string aWord){
+    
+    if(!root){
+        return NULL;
+    }else{
+
+        if(aWord.compare(root->word) < 0){
+            root ->left = deletion(root->left, aWord);
+        }else if(aWord.compare(root->word) > 0){
+            root -> right = deletion(root->right, aWord);
+        }else{
+
+            if(!root->left){
+                node* temp = root->right;
+                delete root;
+                updateNode(temp);
+                return getBalanced(temp);
+            }else if(!root->right){
+                node* temp = root->left;
+                delete root;
+                updateNode(temp);
+                return getBalanced(temp);
+            }else{
+
+                node* temp = findMin(root->right);
+                root->word = temp->word;
+                root->appearances = temp->appearances;
+                delete root;
+                updateNode(temp);
+                return getBalanced(temp);
+            }
+        }
+    }
+
+    
+    
+ }
+
+node* AvlTree::findMin(node* root){
+    node* current = root;
+    while(current->left){
+        current = current->left;
+    }
+
+    return current;
+}
+
+
+void AvlTree::inOrder(){
+    inOrder(root);
+}
+
+void AvlTree::inOrder(node* root){
+    if(!root){
+        return;
+    }else{
+        inOrder(root->left);
+        cout << root->word << ": " << root->appearances << endl;
+        inOrder(root->right);
+    }
+}
+
+void AvlTree::preOrder(){
+    preOrder(root);
+}
+
+void AvlTree::preOrder(node* root){
+    if(!root){
+        return;
+    }else{
+        cout << root->word << ": " << root->appearances << endl;
+        inOrder(root->left);
+        inOrder(root->right);
+    }
+}
+
+void AvlTree::postOrder(){
+    postOrder(root);
+}
+
+void AvlTree::postOrder(node* root){
+    if(!root){
+        return;
+    }else{
+        inOrder(root->left);
+        inOrder(root->right);
+         cout << root->word << ": " << root->appearances << endl;
+    }
+}
+
+
+
+
+
 
 
