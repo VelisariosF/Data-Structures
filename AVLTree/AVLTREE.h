@@ -1,12 +1,12 @@
 #include <iostream>
-
+#include "math.h"
 using namespace std;
 
 
-class node{
+class node2{
     public:
-       node();
-       node(node* l, node* r, string aWord, int aps, int h, int bf){
+       node2();
+       node2(node2* l, node2* r, string aWord, int aps, int h, int bf){
            left = l;
            right = r;
            word = aWord;
@@ -18,94 +18,93 @@ class node{
        int appearances;
        int height;
        int balanceFactor;
-       node *left;
-       node *right;
+       node2 *left;
+       node2 *right;
 };
 
 class AvlTree{
      private:
-       node *root;
-       node* insertion(node* root, string aWord);
-       node* deletion(node* root, string aWord);
-       bool search(node* root, string aWord);
-       int getHeight(node* root);
-       int getBfactor(node* root);
-       node* rightRotation(node* root);
-       node* leftRotation(node* root);
-       node* leftLeftCase(node* root);
-       node* rightRightCase(node* root);
-       node* leftRightCase(node* root);
-       node* rightLeftCase(node* root);
-       node* getBalanced(node* root);
-       void  updateNode(node* root);
-       node* findMin(node* root);
-       void inOrder(node* root);
-       void preOrder(node* root);
-       void postOrder(node* root);
+       node2 *root;
+       node2* insertion(node2* root, string aWord);
+       node2* deletion(node2* root, string aWord);
+       bool search(node2* root, string aWord);
+       int getHeight(node2* root);
+       int getBfactor(node2* root);
+       node2* rightRotation(node2* root);
+       node2* leftRotation(node2* root);
+       node2* leftLeftCase(node2* root);
+       node2* rightRightCase(node2* root);
+       node2* leftRightCase(node2* root);
+       node2* rightLeftCase(node2* root);
+       node2* getBalanced(node2* root);
+       void  updatenode2(node2* root);
+       node2* findMin(node2* root);
+       void inOrder(node2* root);
+       void preOrder(node2* root);
+       void postOrder(node2* root);
     public:
       AvlTree(){
         root = NULL;
       }
-    
+     
       bool insertion(string aWord);
       bool deletion(string aWord);
       bool search(string word);
       void inOrder();
       void preOrder();
       void postOrder();
-    
 };
 
 
 
 
-int AvlTree:: getHeight(node* root){
+int AvlTree:: getHeight(node2* root){
     if(!root)
       return 0;
     return root->height;
 }
 
-int AvlTree:: getBfactor(node* root){
+int AvlTree:: getBfactor(node2* root){
     return root->balanceFactor;
 }
 
-node* AvlTree:: rightRotation(node* root){
-    node* temp = root->left;
+node2* AvlTree:: rightRotation(node2* root){
+    node2* temp = root->left;
     root->left = temp->right;
     temp->right = root;
-    updateNode(root);
-    updateNode(temp);
+    updatenode2(root);
+    updatenode2(temp);
     return temp;
 }
 
-node* AvlTree:: leftRotation(node* root){
-    node* temp = root->right;
+node2* AvlTree:: leftRotation(node2* root){
+    node2* temp = root->right;
     root->right = temp->left;
     temp->left = root;
-    updateNode(root);
-    updateNode(temp);
+    updatenode2(root);
+    updatenode2(temp);
     return temp;
 }
 
-node* AvlTree:: leftLeftCase(node* root){
+node2* AvlTree:: leftLeftCase(node2* root){
     return rightRotation(root);
 }
 
-node* AvlTree:: rightRightCase(node* root){
+node2* AvlTree:: rightRightCase(node2* root){
      return leftRotation(root);
 }
 
-node* AvlTree:: leftRightCase(node* root){
+node2* AvlTree:: leftRightCase(node2* root){
     root->left = leftRotation(root->left);
     return leftLeftCase(root);
 }
 
-node* AvlTree:: rightLeftCase(node* root){
+node2* AvlTree:: rightLeftCase(node2* root){
     root->right = rightRotation(root->right);
     return rightRightCase(root);
 }
 
-node* AvlTree:: getBalanced(node* root){
+node2* AvlTree:: getBalanced(node2* root){
     if(getBfactor(root) == 2){
             if(getBfactor(root->right) >= 0)
             {
@@ -133,7 +132,7 @@ node* AvlTree:: getBalanced(node* root){
          
 }
 
-void AvlTree:: updateNode(node* root){
+void AvlTree:: updatenode2(node2* root){
     int leftChildHeight = -1, rightChildHeight = -1;
     if(root->left != NULL){
         leftChildHeight = getHeight(root->left);
@@ -151,7 +150,7 @@ bool AvlTree:: search(string aWord){
     return search(root, aWord);
 }
 
-bool AvlTree:: search(node* root, string aWord){
+bool AvlTree:: search(node2* root, string aWord){
     if(!root){
         return false;
     }else{
@@ -172,11 +171,11 @@ bool AvlTree:: insertion(string aWord){
      return true;
 }
 
-node* AvlTree::insertion(node* root, string aWord){
+node2* AvlTree::insertion(node2* root, string aWord){
     
     if(!root){
         
-        root = new node(NULL, NULL, aWord, 1, 0, 0);
+        root = new node2(NULL, NULL, aWord, 1, 0, 0);
         return root;
     }else{
 
@@ -191,7 +190,7 @@ node* AvlTree::insertion(node* root, string aWord){
         }
     }
     
-    updateNode(root);
+    updatenode2(root);
     return getBalanced(root);
 }
 
@@ -205,8 +204,8 @@ bool AvlTree::deletion(string aWord){
 }
 
 
-node* AvlTree::deletion(node* root, string aWord){
-    node* temp;
+node2* AvlTree::deletion(node2* root, string aWord){
+    node2* temp;
     if(!root){
         return NULL;
     }else{
@@ -216,94 +215,52 @@ node* AvlTree::deletion(node* root, string aWord){
         }else if(aWord.compare(root->word) > 0){
             root -> right = deletion(root->right, aWord);
         }else{
-
-            if(!root->left && root->right != NULL){
-                 temp = root->right;
-                delete root;
-                updateNode(temp);
-                return getBalanced(temp);
-            }else if(!root->right && root->left != NULL){
-                 temp = root->left;
-                delete root;
-                updateNode(temp);
-                return getBalanced(temp);
-            }else{
-
-                 temp = findMin(root->right);
-                root->word = temp->word;
-                root->appearances = temp->appearances;
-                delete root;
-                updateNode(temp);
-                return getBalanced(temp);
-            }
-        }
-              updateNode(temp);
-                return getBalanced(temp);
-
-    }
-
-
- /*if(!root){
-        return NULL;
-    }else{
-          node *p = root, *pp = 0;
-              
-          while(p && p->word.compare(aWord) != 0){
-              pp = p;
-              if(aWord.compare(p->word) < 0){
-                  p = p->left;
-              }else if(aWord.compare(p->word) > 0){
-                  p = p->right;
-              }else{
-                  cout << "element does not exist" << endl;
-              }
-          }
-
-          if(p->left && p->right){
-              node *s = p->right, 
-                    *ps = p;
-
-              while(s->left){
-                  ps = s;
-                  s = s->left;
-              } 
-              p->word = s->word;
-              p->appearances = s->appearances;
-              p = s;
-              pp = ps;     
-               
-          }
-          node* c;
-          if(p->left) 
-              c = p->left;
-          else
-          {
-              c = p->right;
-          }
-
-          if(p == root)
-             root = c;
-          else
-          {
-              if(p == pp->left)
-                  pp->left = c;
-              else
-              {
-                  pp->right = c;
-              }
-              
-          }
-          p = NULL;
-          delete p;
-          updateNode(root);
-          return getBalanced(root);
-        }*/
-    
-    
+            if((root->left == NULL) ||  (root->right == NULL)){  
+                            node2 *temp = root->left ? root->left : root->right;  
+  
+                         // No child case  
+                          if (temp == NULL){  
+                               temp = root;  
+                               root = NULL;  
+                         }else // One child case  
+                             *root = *temp; // Copy the contents of  
+                           // the non-empty child  
+                         delete temp;  
+             }else{  
+                      // node2 with two children: Get the inorder  
+                         // successor (smallest in the right subtree)  
+                       node2* temp = findMin(root->right);  
+  
+                      // Copy the inorder successor's  
+                     // data to this node2  
+                      root->word = temp->word;  
+   
+                    // Delete the inorder successor  
+                     root->right = deletion(root->right, temp->word);  
+             }  
+          }  
+  
+              // If the tree had only one node2 
+              // then return  
+            if (root == NULL)  
+                return root; 
+            else{
+               updatenode2(root);
+               return getBalanced(root);
+            } 
+           
+     }
+             
  }
 
-node* AvlTree::findMin(node* root){
-    node* current = root;
+
+ 
+    
+    
+ 
+
+node2* AvlTree::findMin(node2* root){
+    node2* current = root;
     while(current->left){
         current = current->left;
     }
@@ -316,7 +273,7 @@ void AvlTree::inOrder(){
     inOrder(root);
 }
 
-void AvlTree::inOrder(node* root){
+void AvlTree::inOrder(node2* root){
     if(!root){
         return;
     }else{
@@ -330,7 +287,7 @@ void AvlTree::preOrder(){
     preOrder(root);
 }
 
-void AvlTree::preOrder(node* root){
+void AvlTree::preOrder(node2* root){
     if(!root){
         return;
     }else{
@@ -344,7 +301,7 @@ void AvlTree::postOrder(){
     postOrder(root);
 }
 
-void AvlTree::postOrder(node* root){
+void AvlTree::postOrder(node2* root){
     if(!root){
         return;
     }else{
@@ -353,6 +310,8 @@ void AvlTree::postOrder(node* root){
          cout << root->word << ": " << root->appearances << endl;
     }
 }
+
+
 
 
 

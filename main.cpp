@@ -1,18 +1,20 @@
 #include <iostream>
 #include <fstream>
-#include "BinarySearchTree.h"
-using namespace std;
+#include "AVLTree\AvlTree.h"
 
+#include "BSTree\BinarySearchTree.h"
 
-int main()
-{
-    BinarySearchTree b, *root = NULL;
-   
+int main(){
+    AvlTree t;
+    BinarySearchTree b;
+
+     
     ifstream f;
     string word;
-    f.open("subject.txt", ios::in);
+    f.open("words.txt", ios::in);
     if(f.is_open()){
       while(f >> word){
+          t.insertion(word);
           b.insertion(word);
       }
        cout << "insertion completed" << endl;
@@ -20,28 +22,23 @@ int main()
     }else{
         cerr << "Coud not open the file" << endl;
     }
+   
 
 
-     f.open("subject.txt", ios::in);
+     f.open("words.txt", ios::in);
     if(f.is_open()){
       while(f >> word){
-          b.deletion(word);
+        if(b.search(word)){
+            t.deletion(word);
+            b.deletion(word);
+        }
+          
       }
     cout << "deletion completed" << endl;
       f.close();
     }else{
         cerr << "Coud not open the file" << endl;
-    }
+    }   
+  return 0;
 
-
-    
-   
- // cout << "Inorder :" << endl;
-  //b.inOrder();
-
- 
-  
-  
-  
-    return 0;
 }
