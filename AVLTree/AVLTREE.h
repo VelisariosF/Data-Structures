@@ -53,7 +53,10 @@ class AvlTree{
       void inOrder();
       void preOrder();
       void postOrder();
+    
 };
+
+
 
 
 int AvlTree:: getHeight(node* root){
@@ -203,7 +206,7 @@ bool AvlTree::deletion(string aWord){
 
 
 node* AvlTree::deletion(node* root, string aWord){
-    
+    node* temp;
     if(!root){
         return NULL;
     }else{
@@ -214,19 +217,19 @@ node* AvlTree::deletion(node* root, string aWord){
             root -> right = deletion(root->right, aWord);
         }else{
 
-            if(!root->left){
-                node* temp = root->right;
+            if(!root->left && root->right != NULL){
+                 temp = root->right;
                 delete root;
                 updateNode(temp);
                 return getBalanced(temp);
-            }else if(!root->right){
-                node* temp = root->left;
+            }else if(!root->right && root->left != NULL){
+                 temp = root->left;
                 delete root;
                 updateNode(temp);
                 return getBalanced(temp);
             }else{
 
-                node* temp = findMin(root->right);
+                 temp = findMin(root->right);
                 root->word = temp->word;
                 root->appearances = temp->appearances;
                 delete root;
@@ -234,8 +237,67 @@ node* AvlTree::deletion(node* root, string aWord){
                 return getBalanced(temp);
             }
         }
+              updateNode(temp);
+                return getBalanced(temp);
+
     }
 
+
+ /*if(!root){
+        return NULL;
+    }else{
+          node *p = root, *pp = 0;
+              
+          while(p && p->word.compare(aWord) != 0){
+              pp = p;
+              if(aWord.compare(p->word) < 0){
+                  p = p->left;
+              }else if(aWord.compare(p->word) > 0){
+                  p = p->right;
+              }else{
+                  cout << "element does not exist" << endl;
+              }
+          }
+
+          if(p->left && p->right){
+              node *s = p->right, 
+                    *ps = p;
+
+              while(s->left){
+                  ps = s;
+                  s = s->left;
+              } 
+              p->word = s->word;
+              p->appearances = s->appearances;
+              p = s;
+              pp = ps;     
+               
+          }
+          node* c;
+          if(p->left) 
+              c = p->left;
+          else
+          {
+              c = p->right;
+          }
+
+          if(p == root)
+             root = c;
+          else
+          {
+              if(p == pp->left)
+                  pp->left = c;
+              else
+              {
+                  pp->right = c;
+              }
+              
+          }
+          p = NULL;
+          delete p;
+          updateNode(root);
+          return getBalanced(root);
+        }*/
     
     
  }

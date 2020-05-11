@@ -131,7 +131,7 @@ node* BinarySearchTree::deletion(node* root, string aWord){
               
           }
           delete p;
-          cout<< "deleted" << endl;
+          
           return root;
           
 
