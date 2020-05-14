@@ -2,10 +2,10 @@
 #include <iostream>
 using namespace std;
 
-class node{
+class bst_node{
     public:
-       node();
-       node(node* l, node* r, string aWord, int aps){
+       bst_node();
+       bst_node(bst_node* l, bst_node* r, string aWord, int aps){
            left = l;
            right = r;
            word = aWord;
@@ -13,20 +13,20 @@ class node{
        }
        string word;
        int appearances;
-       node *left;
-       node *right;
+       bst_node *left;
+       bst_node *right;
 };
 
 class BinarySearchTree{
     private:
-       node *root;
-       node* insertion(node* root, string aWord);
-       node* deletion(node* root, string aWord);
-       bool search(node* root, string aWord);
-       node* findMin(node* root);
-       void inOrder(node* root);
-       void preOrder(node* root);
-       void postOrder(node* root);
+       bst_node *root;
+       bst_node* insertion(bst_node* root, string aWord);
+       bst_node* deletion(bst_node* root, string aWord);
+       bool search(bst_node* root, string aWord);
+       bst_node* findMin(bst_node* root);
+       void inOrder(bst_node* root);
+       void preOrder(bst_node* root);
+       void postOrder(bst_node* root);
    public:
     BinarySearchTree(){
         root = NULL;
@@ -47,11 +47,11 @@ bool BinarySearchTree:: insertion(string aWord){
      return true;
 }
 
-node* BinarySearchTree::insertion(node* root, string aWord){
+bst_node* BinarySearchTree::insertion(bst_node* root, string aWord){
     
     if(!root){
         
-        root = new node(NULL, NULL, aWord, 1);
+        root = new bst_node(NULL, NULL, aWord, 1);
         return root;
     }else{
 
@@ -79,12 +79,12 @@ bool BinarySearchTree::deletion(string aWord){
 }
 
 
-node* BinarySearchTree::deletion(node* root, string aWord){
+bst_node* BinarySearchTree::deletion(bst_node* root, string aWord){
     
     if(!root){
         return NULL;
     }else{
-          node *p = root, *pp = 0;
+          bst_node *p = root, *pp = 0;
               
           while(p && p->word.compare(aWord) != 0){
               pp = p;
@@ -98,7 +98,7 @@ node* BinarySearchTree::deletion(node* root, string aWord){
           }
 
           if(p->left && p->right){
-              node *s = p->right, 
+              bst_node *s = p->right, 
                     *ps = p;
 
               while(s->left){
@@ -111,7 +111,7 @@ node* BinarySearchTree::deletion(node* root, string aWord){
               pp = ps;     
                
           }
-          node* c;
+          bst_node* c;
           if(p->left) 
               c = p->left;
           else
@@ -142,8 +142,8 @@ node* BinarySearchTree::deletion(node* root, string aWord){
 
 
 
-node* BinarySearchTree::findMin(node* root){
-    node* current = root;
+bst_node* BinarySearchTree::findMin(bst_node* root){
+    bst_node* current = root;
     while(current->left){
         current = current->left;
     }
@@ -156,7 +156,7 @@ bool BinarySearchTree:: search(string aWord){
      return search(root, aWord);
 }
 
-bool BinarySearchTree:: search(node* root, string aWord){
+bool BinarySearchTree:: search(bst_node* root, string aWord){
     if(!root){
         return false;
     }else{
@@ -179,7 +179,7 @@ void BinarySearchTree::inOrder(){
     inOrder(root);
 }
 
-void BinarySearchTree::inOrder(node* root){
+void BinarySearchTree::inOrder(bst_node* root){
     if(!root){
         return;
     }else{
@@ -193,7 +193,7 @@ void BinarySearchTree::preOrder(){
     preOrder(root);
 }
 
-void BinarySearchTree::preOrder(node* root){
+void BinarySearchTree::preOrder(bst_node* root){
     if(!root){
         return;
     }else{
@@ -207,7 +207,7 @@ void BinarySearchTree::postOrder(){
     postOrder(root);
 }
 
-void BinarySearchTree::postOrder(node* root){
+void BinarySearchTree::postOrder(bst_node* root){
     if(!root){
         return;
     }else{
