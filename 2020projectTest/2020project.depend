@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1589200006 source:c:\users\Βελισαριος\desktop\2020project\avltree.cpp
+	"AvlTree.h"
+
+1589199954 c:\users\Βελισαριος\desktop\2020project\avltree.h
+	<iostream>
+
+1589197855 source:c:\users\Βελισαριος\desktop\2020project\binarysearchtree.cpp
+	"BinarySearchTree.h"
+
+1589199933 c:\users\Βελισαριος\desktop\2020project\binarysearchtree.h
+	<iostream>
+
+1589197855 source:c:\users\Βελισαριος\desktop\2020project\main.cpp
+	<iostream>
+	<fstream>
+	"AvlTree.h"
+	"BinarySearchTree.h"
+
