@@ -1,4 +1,4 @@
-
+#pragma once
 #include <iostream>
 using namespace std;
 
@@ -160,7 +160,7 @@ bool BinarySearchTree:: search(bst_node* root, string aWord){
     if(!root){
         return false;
     }else{
-        if(root->word == aWord){
+        if(root->word.compare(aWord)){
           return true;
         }else if(aWord.compare(root->word) < 0){
             return search(root->left, aWord);
