@@ -1,16 +1,17 @@
 #include "BinarySearchTree.h"
 
-BinarySearchTree::BinarySearchTree(){
+BinarySearchTree::BinarySearchTree(){//This contructor initializes the root of the tree to a null value
     root = NULL;
 }
-
+//insert metod that gets as parameter the word to  be inserted
 bool BinarySearchTree:: insertion(string aWord){
 
          root = insertion(root, aWord);
 
      return true;
 }
-
+//insert metod that gets as parameter the root and the 
+ //word to  be inserted
 bst_node* BinarySearchTree::insertion(bst_node* root, string aWord){
 
     if(!root){
@@ -26,14 +27,14 @@ bst_node* BinarySearchTree::insertion(bst_node* root, string aWord){
 
             root->right = insertion(root->right, aWord);
         }else{
-
+            //if the word exists just increase its appearances
             root->appearances++;
         }
     }
 
     return root;
 }
-
+//deletion funch that gets as a pram the word to be deleted
 bool BinarySearchTree::deletion(string aWord){
     if(search(aWord)){
         root = deletion(root, aWord);
@@ -42,70 +43,57 @@ bool BinarySearchTree::deletion(string aWord){
     return false;
 }
 
-
+//deletion function
 bst_node* BinarySearchTree::deletion(bst_node* root, string aWord){
-
-    if(!root){
+ bst_node* temp;
+    if(!root){//if the tree is empty just return NULL
         return NULL;
     }else{
-          bst_node *p = root, *pp = 0;
-
-          while(p && p->word.compare(aWord) != 0){
-              pp = p;
-              if(aWord.compare(p->word) < 0){
-                  p = p->left;
-              }else if(aWord.compare(p->word) > 0){
-                  p = p->right;
-              }else{
-                  cout << "element does not exist" << endl;
-              }
-          }
-
-          if(p->left && p->right){
-              bst_node *s = p->right,
-                    *ps = p;
-
-              while(s->left){
-                  ps = s;
-                  s = s->left;
-              }
-              p->word = s->word;
-              p->appearances = s->appearances;
-              p = s;
-              pp = ps;
-
-          }
-          bst_node* c;
-          if(p->left)
-              c = p->left;
-          else
-          {
-              c = p->right;
-          }
-
-          if(p == root)
-             root = c;
-          else
-          {
-              if(p == pp->left)
-                  pp->left = c;
-              else
-              {
-                  pp->right = c;
-              }
-
-          }
-          delete p;
-
-          return root;
-
-
-
-        }
+        //Try to find the word 
+        if(aWord.compare(root->word) < 0){
+            root ->left = deletion(root->left, aWord);
+        }else if(aWord.compare(root->word) > 0){
+            root -> right = deletion(root->right, aWord);
+        }else{
+            if((root->left == NULL) ||  (root->right == NULL)){  
+                            bst_node *temp = root->left ? root->left : root->right;  
+  
+                         // No child case  
+                          if (temp == NULL){  
+                               temp = root;  
+                               root = NULL;  
+                         }else // One child case  
+                             *root = *temp; // Copy the contents of  
+                           // the non-empty child  
+                         delete temp;  
+             }else{  
+                      // bst_node with two children: Get the inorder  
+                         // successor (smallest in the right subtree)  
+                       bst_node* temp = findMin(root->right);  
+  
+                      // Copy the inorder successor's  
+                     // data to this bst_node  
+                      root->word = temp->word;  
+   
+                    // Delete the inorder successor  
+                     root->right = deletion(root->right, temp->word);  
+             }  
+          }  
+  
+              // If the tree had only one bst_node 
+              // then return  
+            if (root == NULL)  
+                return root; 
+            
+        return root;
+           
+     }
+             
     }
 
 
-
+//this returns the node with the min value that belongs to a tree
+//or subtree with the specific root node
 bst_node* BinarySearchTree::findMin(bst_node* root){
     bst_node* current = root;
     while(current->left){
@@ -115,11 +103,11 @@ bst_node* BinarySearchTree::findMin(bst_node* root){
     return current;
 }
 
-
+//this func takes as a param the word to be searched
 bool BinarySearchTree:: search(string aWord){
      return search(root, aWord);
 }
-
+//search function
 bool BinarySearchTree:: search(bst_node* root, string aWord){
     if(!root){
         return false;
@@ -138,7 +126,7 @@ bool BinarySearchTree:: search(bst_node* root, string aWord){
 
 
 
-
+//print nodes using inOrder
 void BinarySearchTree::inOrder(){
     inOrder(root);
 }
@@ -152,7 +140,7 @@ void BinarySearchTree::inOrder(bst_node* root){
         inOrder(root->right);
     }
 }
-
+//print nodes using preOrder
 void BinarySearchTree::preOrder(){
     preOrder(root);
 }
@@ -166,7 +154,7 @@ void BinarySearchTree::preOrder(bst_node* root){
         inOrder(root->right);
     }
 }
-
+//print nodes using postOrder
 void BinarySearchTree::postOrder(){
     postOrder(root);
 }
